@@ -2,7 +2,7 @@ import Title from "./Title";
 
 const Content = () => {
     return (
-        <div><Title content="Content"/></div>
+        <div><Title text="Ares - the Greek god of war and courage"/></div>
     )
     }
     

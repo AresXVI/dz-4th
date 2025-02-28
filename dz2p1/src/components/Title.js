@@ -1,7 +1,7 @@
 
-const Title = ( {header, content, footer} ) => {
+const Title = ( {text} ) => {
     return (
-        <div>{header} {content} {footer}</div>
+        <div>{text}</div>
     )
     }
     
