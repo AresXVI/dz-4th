@@ -1,0 +1,8 @@
+.dflt {
+    margin-top: 5px;
+    color: aqua;
+}
+
+.dflt:last-child {
+    margin-bottom: 7px;
+}
