@@ -1,7 +1,11 @@
+import React from 'react'
 import style from './description.module.css'
-function Description({title, description}) {
+const Description = ( {data} ) => {
   return (
-    <div className={style.description}>{title}, {description}</div>
+    <div>
+      <h1 className={style.title}>{data.title}</h1>
+      <p className={style.desc}>{data.description}</p>
+    </div>
   )
 }
 

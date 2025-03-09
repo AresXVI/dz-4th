@@ -1,9 +1,9 @@
-import styles from './Todo.module.css'
-
+import style from './Todo.module.css'
 const Todo = ({todo}) => {
-  
   return (
-    <div className={styles.dflt}>{todo}</div>
+    <div>
+      <li className={style.dflt}>{todo}</li>
+    </div>
   )
 }
 
