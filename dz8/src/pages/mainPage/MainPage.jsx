@@ -80,10 +80,10 @@ const MainPage = () => {
             <Table tableData={tableData}/>
             {addModal === true
             ? <Modal onClick={closeAddModal} title='СОЗДАН'/>
-            : null}
+            : ''}
             {delModal === true
             ? <Modal onClick={closeDelModal} title='УДАЛЕН'/>
-            : null}
+            : ''}
         </div>
     )
 }
