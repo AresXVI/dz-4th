@@ -5,9 +5,8 @@ import MainPage from './pages/mainPage/MainPage';
 
 function App() {
 
-
   return (
-    <div className="App">
+    <div className="App" id='App'>
       <MainPage/>
     </div>
   );

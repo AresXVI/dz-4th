@@ -2,90 +2,142 @@ import { useForm } from 'react-hook-form';
 import Button from '../../components/Button';
 import { useEffect, useState } from 'react';
 import Inputs from '../inputs/Inputs';
-import Table from '../table/Table';
-import {Modal} from '../../components/Modal';
-const URL = 'http://localhost:8000/Table-array'
+import Table from '../table/Table'; 
+import { Modal } from '../../components/Modal';
+import { getByTitle } from '@testing-library/dom';
+
+const URL = 'http://localhost:8000/Table-array';
 
 const MainPage = () => {
-    const [input, setInput] = useState('')
-    const [arr, setArr] = useState([])
-    const [addModal, setAddModal] = useState(false)
-    const [delModal, setDelModal] = useState(false)
+    const [arr, setArr] = useState([]);
+    const [addModal, setAddModal] = useState(false);
+    const [delModal, setDelModal] = useState(false);
 
     const {
-        register,    
+        register,
         handleSubmit,
-        formState: {errors},
-        reset
-    } = useForm()
+        formState: { errors },
+        reset,
+        setValue,
+    } = useForm({
+        mode: 'onSubmit',
+        reValidateMode: 'onBlur'
+    });
+    
+    const formatPhoneNumber = (digits) => {
+        digits = digits.slice(0, 12);
 
-    const addFunc = async (data, e) => {
-        e.preventDefault()
+        let formatted = '+996';
+        if(digits.length > 3) formatted += ` (${digits.slice(3, 6)}`;
+        if(digits.length > 6) formatted += `) ${digits.slice(6, 8)}`;
+        if(digits.length > 8) formatted += `-${digits.slice(8, 10)}`;
+        if(digits.length > 10) formatted += `-${digits.slice(10, 12)}`;
+        return formatted;
+    };
+
+    const handlePhoneChange = (e) => {
+        const input = e.target.value;
+        const InputElement = e.target;
+        const cursorPosition = InputElement.selectionStart;
         
-        const response = await fetch(URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"    
-            },
-            body: JSON.stringify(data)
-        })    
-        if(response.status === 201) {
-            getFunc(); 
-            openAddModal()
-        }
-    }    
+        const digits = input.replace(/\D/g, '');
+        let formatted = formatPhoneNumber(digits);
 
+        setValue('ph_num', formatted);
+
+        setTimeout(() => {
+            const newCursorPosition = cursorPosition + (formatted.length - input.length);
+            InputElement.selectionStart = InputElement.selectionEnd = newCursorPosition;
+        }, 0);
+    };
+
+    const addFunc = async (data) => {
+        try {
+            const response = await fetch(URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.status === 201) {
+                getFunc();
+                openAddModal();
+                reset();
+                setPhone('');
+            }
+        } catch (error) {
+            console.log(`Ошибка: ${error}`);
+            alert('Не удалось выполнить запрос. Проверьте подключение к серверу.')
+        } 
+    };
+    
     const getFunc = async () => {
-        const response = await fetch(URL);    
-        const data = await response.json();
-        setArr(data);
-        reset(setInput)
-    }
-
-    const deleteFunc = async (id) => {
-        const response = await fetch(URL + `/${id}`, {
-            method: "DELETE",
-        })    
-        if(response.status === 200) {
-            getFunc();
-            openDelModal();
+        try {
+            const response = await fetch(URL);
+            const data = await response.json();
+            setArr(data);
+        } catch (error) {
+            console.log(`Ошибка: ${error}`);
+            alert('Не удалось выполнить запрос. Проверьте подключение к серверу.')
         }
-    }
-
+    };
+    
+    const deleteFunc = async (id) => {
+        try {
+            const response = await fetch(URL + `/${id}`, {
+                method: "DELETE",
+            });
+            
+            if (response.status === 200) {
+                getFunc();
+                openDelModal();
+            }
+        } catch (error) {
+            console.log(`Ошибка: ${error}`);
+            alert('Не удалось выполнить запрос. Проверьте подключение к серверу.')
+        }
+    };
+    
     useEffect(() => {
-        getFunc()    
-    }, [])
+        getFunc();
+    }, []);
+    
     const openAddModal = () => setAddModal(true);
-    const closeAddModal = () => setAddModal(false);
-
     const openDelModal = () => setDelModal(true);
-    const closeDelModal = () => setDelModal(false);
-
-    const inpitsData = {
+    const closeModal = () => {
+        setAddModal(false);
+        setDelModal(false);
+    };
+    
+    const inputsData = {
         register,
         handleSubmit,
         errors,
-        setInput,
-        addFunc
-    }    
+        addFunc,
+        handlePhoneChange,
+        phone
+    };
 
     const tableData = {
         arr,
         deleteFunc
-    }    
+    };
+
+    const modalData = {
+        addModal,
+        delModal,
+        closeModal
+    };
 
     return (
-        <div>
-            <Inputs inputsData={inpitsData} />
-            <Table tableData={tableData}/>
-            {addModal === true
-            ? <Modal onClick={closeAddModal} title='СОЗДАН'/>
-            : ''}
-            {delModal === true
-            ? <Modal onClick={closeDelModal} title='УДАЛЕН'/>
-            : ''}
+        <div id='MainPage'>
+            <Inputs inputsData={inputsData} />
+            <Table tableData={tableData} />
+            {addModal || delModal ? <Modal data={modalData} /> : null}
         </div>
-    )
-}
+    );
+};
 
-export default MainPage
+export default MainPage;
