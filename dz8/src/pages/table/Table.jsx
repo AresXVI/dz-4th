@@ -26,7 +26,7 @@ const Table = ({tableData}) => {
                     <tbody>
                         {arr.length === 0 
                         ? <tr>
-                            <td colSpan='4' className='sp_pust'>
+                            <td colSpan='5' className='sp_pust'>
                                 Список пуст...
                             </td>
                         </tr> 

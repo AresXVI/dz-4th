@@ -6,7 +6,7 @@ import Table from '../table/Table';
 import { Modal } from '../../components/Modal';
 import { getByTitle } from '@testing-library/dom';
 
-const URL = 'http://localhost:8000/Table-array';
+const URL = 'https://6836e669664e72d28e429a5a.mockapi.io/Table-array';
 
 const MainPage = () => {
     const [arr, setArr] = useState([]);
@@ -65,7 +65,6 @@ const MainPage = () => {
                 getFunc();
                 openAddModal();
                 reset();
-                setPhone('');
             }
         } catch (error) {
             console.log(`Ошибка: ${error}`);
@@ -116,8 +115,7 @@ const MainPage = () => {
         handleSubmit,
         errors,
         addFunc,
-        handlePhoneChange,
-        phone
+        handlePhoneChange
     };
 
     const tableData = {
